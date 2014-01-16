@@ -1,29 +1,46 @@
-import ssl
-import socket
-import wx
-import time
+import socket,select,string,sys,ssl
 
+def prompt() :
+    sys.stdout.write('<You> ')
+    sys.stdout.flush()
 
-app = wx.App()
-win = wx.Frame(None, title = "Client", size = (600, 480))
-win.Show()
-contents = wx.TextCtrl(win, pos = (10, 10), size = (580, 400), style = wx.TE_MULTILINE | wx.HSCROLL)
-contents.SetValue('sdfsdfsdf\n')
-message = wx.TextCtrl(win, pos = (10, 425), size = (400, 25))
-send = wx.Button(win, label = "Send", pos = (410, 420), size = (80, 25))
-check = wx.Button(win, label = "History", pos = (500, 420), size = (80, 25))
-#app.MainLoop()
+if __name__ == "__main__":
 
+    if(len(sys.argv) < 3) :
+        print 'Usage : python chat_client.py hostname port'
+        sys.exit()
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s = ssl.wrap_socket(s)
-s.connect(('localhost', 8080))
-print(s.cipher())
-while True:
-        data = s.read(1024)
-        now = time.strftime("%Y-%m-%d %H:%M:%S")
-        if data:
-            contents.SetValue('[' + now + '] Server say: ' + data)
+    HOST = sys.argv[1]
+    PORT = int(sys.argv[2])
 
-app.MainLoop()
-s.close()
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s = ssl.wrap_socket(s)
+    s.settimeout(2)
+
+    try :
+        s.connect((HOST, PORT))
+    except :
+        print 'Unable to connect'
+        sys.exit()
+
+    print 'Connected to remote host. Start sending messages'
+    prompt()
+
+    while 1:
+        socket_list = [sys.stdin, s]
+
+        read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
+
+        for sock in read_sockets:
+            if sock == s:
+                data = sock.recv(4096)
+                if not data :
+                    print '\nDisconnected from chat server'
+                    sys.exit()
+                else :
+                    sys.stdout.write(data)
+                    prompt()
+            else :
+                msg = sys.stdin.readline()
+                s.send(msg)
+                prompt()
