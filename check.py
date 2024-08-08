@@ -5,7 +5,7 @@ import sys
 #key = '12345678'
 
 while 1:
-    key = raw_input('Please input the key(8 bytes): ')
+    key = input('Please input the key(8 bytes): ')
     if key == '12345678':
         file = open('history', 'r')
         try:
@@ -16,9 +16,9 @@ while 1:
         obj = DES.new(key)
         get_cryp = a2b_hex(text)
         after_text = obj.decrypt(get_cryp)
-        print '\nChat History: \n' + after_text
+        print('\nChat History: \n', after_text)
         break;
     else:
-        result = raw_input("Wrong!Input anything try again!(If you won't try another time, just input 'no') Your Answer is: ")
+        result = input("Wrong!Input anything try again!(If you won't try another time, just input 'no') Your Answer is: ")
         if result == 'no':
             break;

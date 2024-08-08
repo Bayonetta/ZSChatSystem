@@ -1,11 +1,16 @@
 ZSChatSystem
 ============
 
-基于openssl的聊天系统
+ * Using Python socket
+ * Point-to-point communication model
+ * Secure socket communication based on OpenSSL
+ * Bidirectional authentication between client and server
+ * Local Storage of Chat history
 
- * 使用python socket
- * MacOX或Linux平台均可
- * 点到点模式
- * 基于OpenSSL的安全套接字通信
- * 客户端服务器双向认证
- * 聊天记录本地加密存储，输入正确口令可查看
+
+============
+
+python server.py
+python client.py
+python client.py
+...
